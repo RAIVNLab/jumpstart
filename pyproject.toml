@@ -1,0 +1,60 @@
+[project]
+name = "jumpstart"
+version = "0.1.0"
+description = "Train offline reinforcement-learning algorithms on Minari datasets"
+readme = "README.md"
+requires-python = ">=3.11, <3.12"
+dependencies = [
+    "ale-py==0.9.0",
+    "bayesian-optimization==1.4.3",
+    "d3rlpy",
+    "gymnasium-robotics>=1.4.0",
+    "gymnasium[accept-rom-license,atari,mujoco,minigrid,other]>=1.2.0",
+    "hyperopt>=0.2.7",
+    "minari[all,hf]>=0.5.3",
+    "opencv-python-headless>=4.12.0.88",
+    "optuna>=4.5.0",
+    "pyyaml",
+    "ray[tune]>=2.48.0",
+    "tensorboard>=2.20.0",
+    "torch>=2.10.0",
+    "tyro>=0.9.31",
+    "wandb>=0.24.0",
+]
+
+[project.scripts]
+jumpstart = "main:main"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.30.1",
+    "ruff>=0.8.0",
+]
+
+[tool.uv]
+package = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+d3rlpy = { git = "https://github.com/omi-n/d3rlpy.git" }
+torch = { index = "pytorch-cu128" }
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+include = ["jumpstart*"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "double"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
