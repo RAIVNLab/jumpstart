@@ -47,7 +47,7 @@ def iql_train(
     reward_scale: float = 0.0,
     normalize_reward: bool = False,
     # --- General ---
-    env_type=None,
+    env_type: str | None = None,
     wandb: bool = False,
     tensorboard: bool = False,
     project_name: str = "iql-minari",

@@ -37,7 +37,7 @@ def rebrac_train(
     dropout: float = 0.0,
     critic_ln: bool = True,
     # --- General ---
-    env_type=None,
+    env_type: str | None = None,
     wandb: bool = False,
     tensorboard: bool = False,
     project_name: str = "rebrac-minari",
