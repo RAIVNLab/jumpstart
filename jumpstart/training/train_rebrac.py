@@ -2,7 +2,7 @@ import d3rlpy
 import numpy as np
 from jumpstart.utils.d3rl_data import get_minari
 from jumpstart.utils.data_stats import DatasetStats
-from jumpstart.utils.d3rl_scheduler import ChainedSchedulerFactory
+from jumpstart.training.utils.factory import get_optimizer_factory
 from jumpstart.utils.d3rl_evaluate import evaluate_with_environment
 from typing import List, Literal
 from jumpstart.utils.parse_loss import parse_loss
@@ -105,16 +105,6 @@ def rebrac_train(
     # --- Optimizer and Scheduler Setup ---
     steps_per_epoch = 1000
 
-    if use_scheduler:
-        warmup_steps = 2000
-        warmup_lr = d3rlpy.optimizers.WarmupSchedulerFactory(warmup_steps=warmup_steps)
-        cosine_lr = d3rlpy.optimizers.CosineAnnealingLRFactory(
-            T_max=n_steps - warmup_steps, eta_min=0, last_epoch=-1
-        )
-        scheduler_factory = ChainedSchedulerFactory(warmup_lr, cosine_lr)
-    else:
-        scheduler_factory = None
-
     reward_scaler = None
     if normalize_reward:
         if "antmaze" not in env.lower():
@@ -128,10 +118,12 @@ def rebrac_train(
             reward_scale = 1 / reward_scale
         reward_scaler = d3rlpy.preprocessing.MultiplyRewardScaler(reward_scale)
 
-    optim_factory = d3rlpy.optimizers.AdamWFactory(
+    optim_factory = get_optimizer_factory(
+        n_steps=n_steps,
+        warmup_steps=2000,
         weight_decay=weight_decay,
         clip_grad_norm=clip_grad_norm,
-        lr_scheduler_factory=scheduler_factory,
+        use_scheduler=use_scheduler,
     )
 
     # --- Algorithm Configuration ---

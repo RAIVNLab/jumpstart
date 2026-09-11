@@ -1,0 +1,11 @@
+# Random sample (seed 42), one dataset per environment, with BC/BCP trials in the DB.
+mujoco/hopper/medium-v0
+D4RL/pointmaze/open-v2
+mujoco/reacher/medium-v0
+D4RL/hammer/human-v2
+D4RL/pen/expert-v2
+mujoco/swimmer/expert-v0
+mujoco/walker2d/medium-v0
+mujoco/halfcheetah/medium-v0
+mujoco/inverteddoublependulum/medium-v0
+mujoco/ant/simple-v0

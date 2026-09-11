@@ -43,14 +43,21 @@ def get_optimizer_factory(
     # d3rlpy doesnt support this by default,
     # check import for implementation of chained
     if use_scheduler:
+        if n_steps < 0 or warmup_steps < 0:
+            raise ValueError("n_steps and warmup_steps must be nonnegative")
         # small datasets (e.g. d4rl/pen/human) can have n_steps <= warmup_steps,
         # which makes CosineAnnealingLR's T_max zero and crashes get_lr.
         warmup_steps = min(warmup_steps, max(n_steps - 1, 0))
-        warmup_lr = d3rlpy.optimizers.WarmupSchedulerFactory(warmup_steps=warmup_steps)
         cosine_lr = d3rlpy.optimizers.CosineAnnealingLRFactory(
             T_max=max(n_steps - warmup_steps, 1), eta_min=0, last_epoch=-1
         )
-        scheduler_factory = ChainedSchedulerFactory(warmup_lr, cosine_lr)
+        if warmup_steps:
+            warmup_lr = d3rlpy.optimizers.WarmupSchedulerFactory(warmup_steps=warmup_steps)
+            scheduler_factory = ChainedSchedulerFactory(warmup_lr, cosine_lr)
+        else:
+            # WarmupSchedulerFactory divides by warmup_steps, including at creation.
+            # Zero warmup and zero/one-update phases need only a valid cosine schedule.
+            scheduler_factory = cosine_lr
     else:
         scheduler_factory = None
 
